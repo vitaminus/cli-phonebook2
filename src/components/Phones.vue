@@ -1,66 +1,95 @@
 <template>
   <div class="row">
     <h1>{{ title }}</h1>
-    <div class="input-field col s5">
+    <div class="input-field col s6 l5">
       <input type="text" name="name" id="phone-name" v-model="phone.name" v-validate="'required|min:5|max:40|alpha_spaces'">
       <label for="phone-name">Name</label>
       <span class="error" v-show="errors.has('name')">{{ errors.first('name') }}</span>
     </div>
-    <div class="input-field col s5">
+    <div class="input-field col s6 l5">
       <the-mask type="text" :mask="['+### (##)-###-##-##']" :masked=true id="phone-number" name="number" v-model="phone.number" v-validate="'required|min:19'" />
       <label for="phone-number">Number</label>
       <div class="error-block">
         <span class="error" v-show="errors.has('number')">{{ errors.first('number') }}</span>
       </div>
     </div>
-    <button v-bind:disabled="errors.any()" class="btn col s2" @click="addPhone()">Add Phone</button>
+    <button v-bind:disabled="errors.any()" class="btn col s12 l2" @click="addPhone()">Add Phone</button>
     <div>
     </div>
     <EditPhone v-show="edit" phones=phones />
-    <h6 class="col offset-s9 s3">Phones count: {{ allPhones }}</h6>
-    <div class="input-field offset-s8 col s4">
+    <h6 class="col s12 right-align">Phones count: {{ allPhones }}</h6>
+    <div class="input-field col offset-s7 s5 offset-l9 l3 right-align">
       <input type="text" v-model="filter" id="phones-filter" class="">
       <label for="phones-filter">Filter by name</label>
     </div>
-    <div v-if="phones.length">
-      <table class="highlight">
-        <thead>
-          <tr>
-            <!-- <th>ID</th> -->
-            <th width="35%">Name</th>
-            <th width="35%">Number</th>
-            <th width="15%">Edit Phone</th>
-            <th width="15%">Delete Phone</th>
-          </tr>
-        </thead>
-        <tbody v-for="phone of filteredPhones" :key="phone['.key']">
-          <tr v-if="!phone.edit">
-            <!-- <td>{{ phone['.key'] }}</td> -->
-            <td>{{ phone.name }}</td>
-            <td>{{ phone.number }}</td>
-            <td @click="editPhone(phone['.key'])" class="pointer">
-              <button class="btn-small">Edit</button>
-            </td>
-            <td @click="removePhone(phone['.key'])" class="pointer">
-              <button class="btn-small">Remove</button>
-            </td>
-          </tr>
-          <tr v-else>
-            <td>
+    <div v-if="filteredPhones.length">
+      <div class="hide-on-small-only">
+        <table class="highlight">
+          <thead>
+            <tr>
+              <!-- <th>ID</th> -->
+              <th width="35%">Name</th>
+              <th width="35%">Number</th>
+              <th width="15%"></th>
+              <th width="15%"></th>
+            </tr>
+          </thead>
+          <tbody v-for="phone of filteredPhones" :key="phone['.key']">
+            <tr v-if="!phone.edit">
+              <!-- <td>{{ phone['.key'] }}</td> -->
+              <td>{{ phone.name }}</td>
+              <td>{{ phone.number }}</td>
+              <td>
+                <button @click="editPhone(phone['.key'])" class="btn-small">Edit</button>
+              </td>
+              <td>
+                <button @click="removePhone(phone['.key'])" class="btn-small">Remove</button>
+              </td>
+            </tr>
+            <tr v-else>
+              <td>
+                <input type="text" id="phone-name" name="name" v-model="phone.name" v-validate="'required|min:5|max:40'">
+              </td>
+              <td>
+                <the-mask type="text" name="number" :mask="['+### (##)-###-##-##']" :masked=true id="phone-number" v-model="phone.number" v-validate="'required|min:19'" />
+              </td>
+              <td>
+                <button @click="saveEdit(phone)" class="btn-small">Save</button>
+              </td>
+              <td>
+                <button @click="cancelEdit(phone['.key'])" class="btn-small">Cancel</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="hide-on-med-and-up">
+        <div v-for="phone of filteredPhones" :key="phone['.key']" class="col s12">
+          <div v-if="!phone.edit" class="card">
+            <div class="card-content">
+              <span class="card-title">{{ phone.name }}</span>
+              <span class="card-title">{{ phone.number }}</span>
+            </div>
+            <div class="card-action">
+              <button @click="editPhone(phone['.key'])" class="btn">Edit</button>
+              <button @click="removePhone(phone['.key'])" class="btn">Remove</button>
+            </div>
+          </div>
+          <div v-else class="card">
+            <div class="card-content">
               <input type="text" id="phone-name" name="name" v-model="phone.name" v-validate="'required|min:5|max:40'">
-            </td>
-            <td>
               <the-mask type="text" name="number" :mask="['+### (##)-###-##-##']" :masked=true id="phone-number" v-model="phone.number" v-validate="'required|min:19'" />
-            </td>
-            <td>
-              <button @click="saveEdit(phone)" class="btn-small">Save</button>
-            </td>
-            <td>
-              <button @click="cancelEdit(phone['.key'])" class="btn-small">Cancel</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+            <div class="card-action">
+              <button @click="saveEdit(phone)" class="btn">Save</button>
+              <button @click="cancelEdit(phone['.key'])" class="btn">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-else>
+      <p class="col offset-s4 s4 not-found">Phones not found</p>
     </div>
   </div>
 </template>
@@ -158,5 +187,9 @@ span.error {
 .error-block {
   display: block;
   height: 50px;
+}
+
+p.not-found {
+  font-size: 18px;
 }
 </style>
