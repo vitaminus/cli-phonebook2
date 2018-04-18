@@ -7,7 +7,7 @@
       <span class="error" v-show="errors.has('name')">{{ errors.first('name') }}</span>
     </div>
     <div class="input-field col s5">
-      <the-mask type="text" :mask="['+### (##)-###-##-##']" :masked=true id="phone-number" name="number" v-model="phone.number" v-validate="'required|min:13'" />
+      <the-mask type="text" :mask="['+### (##)-###-##-##']" :masked=true id="phone-number" name="number" v-model="phone.number" v-validate="'required|min:19'" />
       <label for="phone-number">Number</label>
       <div class="error-block">
         <span class="error" v-show="errors.has('number')">{{ errors.first('number') }}</span>
@@ -50,7 +50,7 @@
               <input type="text" id="phone-name" name="name" v-model="phone.name" v-validate="'required|min:5|max:40'">
             </td>
             <td>
-              <the-mask type="text" name="number" :mask="['+### (##)-###-##-##']" :masked=true id="phone-number" v-model="phone.number" v-validate="'required|min:13'" />
+              <the-mask type="text" name="number" :mask="['+### (##)-###-##-##']" :masked=true id="phone-number" v-model="phone.number" v-validate="'required|min:19'" />
             </td>
             <td>
               <button @click="saveEdit(phone)" class="btn-small">Save</button>
