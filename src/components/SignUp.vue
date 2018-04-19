@@ -54,9 +54,7 @@ export default {
           vm.email = ''
           vm.password = ''
           vm.$validator.reset()
-          setTimeout(function () {
-            vm.message = ''
-          }, 3000)
+          this.$router.replace('phones')
         },
         function (err) {
           console.log('Error!!!' + err.message)

@@ -145,7 +145,12 @@ export default {
       this.$validator.validateAll().then(res => {
         if (res) {
           const userId = this.currentUser.uid
-          phonesRef.push({name: this.phone.name, number: this.phone.number, userId: userId, edit: false})
+          phonesRef.push({
+            name: this.phone.name,
+            number: this.phone.number,
+            userId: userId,
+            edit: false
+          })
           this.phone.name = ''
           this.phone.number = ''
           this.$validator.reset()
@@ -162,15 +167,19 @@ export default {
       phonesRef.child(key).update({ edit: false })
     },
     saveEdit (phone) {
-      this.$validator.validateAll().then(res => {
-        if (res) {
-          const key = phone['.key']
-          phonesRef.child(key).set({ name: phone.name, number: phone.number, edit: false })
-          this.phone.name = ''
-          this.phone.number = ''
-          this.$validator.reset()
-        }
-      })
+      if (phone.name && phone.number) {
+        const userId = this.currentUser.uid
+        const key = phone['.key']
+        phonesRef.child(key).set({
+          name: phone.name,
+          number: phone.number,
+          userId: userId,
+          edit: false
+        })
+        this.phone.name = ''
+        this.phone.number = ''
+        this.$validator.reset()
+      }
     },
     logout: function () {
       firebase.auth().signOut().then(() => {
