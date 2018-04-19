@@ -6,14 +6,21 @@ import router from './router'
 import './firebase'
 import VueFire from 'vuefire'
 import VeeValidate from 'vee-validate'
+import firebase from 'firebase'
 
 Vue.config.productionTip = false
 Vue.use(VueFire)
 Vue.use(VeeValidate)
 /* eslint-disable no-new */
-new Vue({
-  el: '#app',
-  router,
-  components: { App },
-  template: '<App/>'
+let app
+
+firebase.auth().onAuthStateChanged(function (user) {
+  if (!app) {
+    new Vue({
+      el: '#app',
+      router,
+      components: { App },
+      template: '<App/>'
+    })
+  }
 })

@@ -1,5 +1,10 @@
 <template>
   <div class="row">
+    <div class="col s12 right-align logout">
+      <span>{{ currentUser.email }}</span>
+      <a href="#" @click="logout" class="">Logout</a>
+    </div>
+    <div class="row"></div>
     <h1>{{ title }}</h1>
     <div class="input-field col s6 l5">
       <input type="text" name="name" id="phone-name" v-model="phone.name" v-validate="'required|min:5|max:40|alpha_spaces'">
@@ -24,14 +29,13 @@
     </div>
     <div v-if="filteredPhones.length">
       <div class="hide-on-small-only">
-        <table class="highlight">
+        <table class="highlight centered">
           <thead>
             <tr>
               <!-- <th>ID</th> -->
               <th width="35%">Name</th>
               <th width="35%">Number</th>
-              <th width="15%"></th>
-              <th width="15%"></th>
+              <th width="30%" colspan="2">Action</th>
             </tr>
           </thead>
           <tbody v-for="phone of filteredPhones" :key="phone['.key']">
@@ -97,6 +101,7 @@
 <script>
 import EditPhone from './EditPhone.vue'
 import { phonesRef } from '../firebase'
+import firebase from 'firebase'
 import { TheMask } from 'vue-the-mask'
 export default {
   name: 'Phones',
@@ -127,15 +132,20 @@ export default {
       return this.filteredPhones.length
     },
     filteredPhones: function () {
+      let userId = this.currentUser.uid
       return this.phones.filter(phone =>
-        phone.name.toLowerCase().includes(this.filter))
+        phone.name.toLowerCase().includes(this.filter) && phone.userId === userId)
+    },
+    currentUser: function () {
+      return firebase.auth().currentUser
     }
   },
   methods: {
     addPhone () {
       this.$validator.validateAll().then(res => {
         if (res) {
-          phonesRef.push({name: this.phone.name, number: this.phone.number, edit: false})
+          const userId = this.currentUser.uid
+          phonesRef.push({name: this.phone.name, number: this.phone.number, userId: userId, edit: false})
           this.phone.name = ''
           this.phone.number = ''
           this.$validator.reset()
@@ -152,8 +162,20 @@ export default {
       phonesRef.child(key).update({ edit: false })
     },
     saveEdit (phone) {
-      const key = phone['.key']
-      phonesRef.child(key).set({ name: phone.name, number: phone.number, edit: false })
+      this.$validator.validateAll().then(res => {
+        if (res) {
+          const key = phone['.key']
+          phonesRef.child(key).set({ name: phone.name, number: phone.number, edit: false })
+          this.phone.name = ''
+          this.phone.number = ''
+          this.$validator.reset()
+        }
+      })
+    },
+    logout: function () {
+      firebase.auth().signOut().then(() => {
+        this.$router.replace('login')
+      })
     }
   }
 }
@@ -191,5 +213,10 @@ span.error {
 
 p.not-found {
   font-size: 18px;
+}
+
+.logout {
+  font-size: 18px;
+  font-weight: 500;
 }
 </style>

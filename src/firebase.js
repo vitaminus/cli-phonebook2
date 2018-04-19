@@ -11,3 +11,4 @@ const app = initializeApp({
 
 export const db = app.database()
 export const phonesRef = db.ref('phones')
+export const usersRef = db.ref('users')
