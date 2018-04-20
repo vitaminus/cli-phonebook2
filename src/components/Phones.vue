@@ -87,8 +87,10 @@
           </div>
           <div v-else class="card">
             <div class="card-content">
-              <input type="text" id="phone-name" name="name" v-model="phone.name" v-validate="'required|min:5|max:40'">
-              <the-mask type="text" name="number" :mask="['+### (##)-###-##-##']" :masked=true id="phone-number" v-model="phone.number" v-validate="'required|min:19'" />
+              <div class="row">
+                <input type="text" class="col offset-s3 s6" id="phone-name" name="name" v-model="phone.name" v-validate="'required|min:5|max:40'">
+                <the-mask type="text" class="col offset-s3 s6" name="number" :mask="['+### (##)-###-##-##']" :masked=true id="phone-number" v-model="phone.number" v-validate="'required|min:19'" />
+              </div>
             </div>
             <div class="card-action">
               <button @click="saveEdit(phone)" class="btn">Save</button>
