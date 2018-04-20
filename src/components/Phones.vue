@@ -2,23 +2,23 @@
   <div class="row">
     <div class="col s12 right-align logout">
       <span>{{ currentUser.email }}</span>
-      <a href="#" @click="logout" class="">Logout</a>
+      <a href="#" @click="logout">Logout</a>
     </div>
     <div class="row"></div>
     <h1>{{ title }}</h1>
     <div class="input-field col s6 l5">
-      <input type="text" name="name" id="phone-name" v-model="phone.name" v-validate="'required|min:5|max:40|alpha_spaces'">
+      <input type="text" name="name" id="phone-name" v-model="addedPhone.name" v-validate="'required|min:5|max:40|alpha_spaces'">
       <label for="phone-name">Name</label>
       <span class="error" v-show="errors.has('name')">{{ errors.first('name') }}</span>
     </div>
     <div class="input-field col s6 l5">
-      <the-mask type="text" :mask="['+### (##)-###-##-##']" :masked=true id="phone-number" name="number" v-model="phone.number" v-validate="'required|min:19'" />
+      <the-mask type="text" :mask="['+### (##)-###-##-##']" :masked=true id="phone-number" name="number" v-model="addedPhone.number" v-validate="'required|min:19'" />
       <label for="phone-number">Number</label>
       <div class="error-block">
         <span class="error" v-show="errors.has('number')">{{ errors.first('number') }}</span>
       </div>
     </div>
-    <button v-bind:disabled="errors.any()" class="btn col s12 l2" @click="addPhone()">Add Phone</button>
+    <button v-bind:disabled="errors.has('name') || errors.has('number')" class="btn col s12 l2" @click="addPhone()">Add Phone</button>
     <div>
     </div>
     <EditPhone v-show="edit" phones=phones />
@@ -29,7 +29,7 @@
     </div>
     <div v-if="filteredPhones.length">
       <div class="hide-on-small-only">
-        <table class="highlight centered">
+        <table class="highlight centered phones-table">
           <thead>
             <tr>
               <!-- <th>ID</th> -->
@@ -52,13 +52,19 @@
             </tr>
             <tr v-else>
               <td>
-                <input type="text" id="phone-name" name="name" v-model="phone.name" v-validate="'required|min:5|max:40'">
+                <input type="text" id="phone-name" class="col offset-s3 s8 offset-m1 m10 offset-xl2 xl9 edit-phone" name="edit-name" v-model="phone.name" v-validate="'required|min:5|max:40'">
+                <div class="col edit-error-block">
+                  <span class="error" v-if="errors.has('edit-name')">{{ errors.first('edit-name') }}</span>
+                </div>
               </td>
               <td>
-                <the-mask type="text" name="number" :mask="['+### (##)-###-##-##']" :masked=true id="phone-number" v-model="phone.number" v-validate="'required|min:19'" />
+                <the-mask type="text" id="phone-number" class="col offset-s3 s8 offset-m2 m8 offset-xl3 xl7 edit-phone" name="edit-number" v-model="phone.number" :mask="['+### (##)-###-##-##']" :masked=true v-validate="'required|min:19'" />
+                <div class="edit-error-block">
+                  <span class="error" v-if="errors.has('edit-number')">{{ errors.first('edit-number') }}</span>
+                </div>
               </td>
               <td>
-                <button @click="saveEdit(phone)" class="btn-small">Save</button>
+                <button v-bind:disabled="errors.has('edit-name') || errors.has('edit-number')" @click="saveEdit(phone)" class="btn-small">Save</button>
               </td>
               <td>
                 <button @click="cancelEdit(phone['.key'])" class="btn-small">Cancel</button>
@@ -118,7 +124,7 @@ export default {
       filter: '',
       phones: [],
       edit: false,
-      phone: {
+      addedPhone: {
         name: '',
         number: ''
       }
@@ -146,13 +152,13 @@ export default {
         if (res) {
           const userId = this.currentUser.uid
           phonesRef.push({
-            name: this.phone.name,
-            number: this.phone.number,
+            name: this.addedPhone.name,
+            number: this.addedPhone.number,
             userId: userId,
             edit: false
           })
-          this.phone.name = ''
-          this.phone.number = ''
+          this.addedPhone.name = ''
+          this.addedPhone.number = ''
           this.$validator.reset()
         }
       })
@@ -167,19 +173,14 @@ export default {
       phonesRef.child(key).update({ edit: false })
     },
     saveEdit (phone) {
-      if (phone.name && phone.number) {
-        const userId = this.currentUser.uid
-        const key = phone['.key']
-        phonesRef.child(key).set({
-          name: phone.name,
-          number: phone.number,
-          userId: userId,
-          edit: false
-        })
-        this.phone.name = ''
-        this.phone.number = ''
-        this.$validator.reset()
-      }
+      const userId = this.currentUser.uid
+      const key = phone['.key']
+      phonesRef.child(key).set({
+        name: phone.name,
+        number: phone.number,
+        userId: userId,
+        edit: false
+      })
     },
     logout: function () {
       firebase.auth().signOut().then(() => {
@@ -215,9 +216,26 @@ span.error {
   color: red;
 }
 
+.phones-table {
+  font-size: 18px;
+}
+
 .error-block {
   display: block;
   height: 50px;
+}
+
+.edit-error-block {
+  display: block;
+  position: absolute;
+  margin-top: 20px;
+  font-size: 15px;
+}
+
+input.edit-phone {
+  font-size: 17px;
+  height: 1em;
+  margin: 0;
 }
 
 p.not-found {
