@@ -54,7 +54,7 @@ export default {
           vm.email = ''
           vm.password = ''
           vm.$validator.reset()
-          this.$router.replace('phones')
+          vm.$router.replace('phones')
         },
         function (err) {
           console.log('Error!!!' + err.message)
