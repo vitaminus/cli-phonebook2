@@ -7,12 +7,12 @@
     <div class="row"></div>
     <h1>{{ title }}</h1>
     <div class="input-field col s6 l5">
-      <input type="text" name="name" id="phone-name" v-model="addedPhone.name" v-validate="'required|min:5|max:40|alpha_spaces'">
+      <input type="text" name="name" id="phone-name" v-model="addedPhone.name" @keydown.enter.prevent='addPhone()' v-validate="'required|min:5|max:40|alpha_spaces'">
       <label for="phone-name">Name</label>
       <span class="error" v-show="errors.has('name')">{{ errors.first('name') }}</span>
     </div>
     <div class="input-field col s6 l5">
-      <the-mask type="text" :mask="['+### (##)-###-##-##']" :masked=true id="phone-number" name="number" v-model="addedPhone.number" v-validate="'required|min:19'" />
+      <the-mask type="text" :mask="['+### (##)-###-##-##']" :masked=true id="phone-number" name="number" @keydown.enter.prevent='addPhone()' v-model="addedPhone.number" v-validate="'required|min:19'" />
       <label for="phone-number">Number</label>
       <div class="error-block">
         <span class="error" v-show="errors.has('number')">{{ errors.first('number') }}</span>
