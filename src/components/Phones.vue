@@ -112,7 +112,6 @@ import { TheMask } from 'vue-the-mask'
 export default {
   name: 'Phones',
   components: {
-    EditPhone,
     TheMask
   },
   // props: {
