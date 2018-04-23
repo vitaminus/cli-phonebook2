@@ -21,7 +21,6 @@
     <button v-bind:disabled="errors.has('name') || errors.has('number')" class="btn col s12 l2" @click="addPhone()">Add Phone</button>
     <div>
     </div>
-    <EditPhone v-show="edit" phones=phones />
     <h6 class="col s12 right-align">Phones count: {{ allPhones }}</h6>
     <div class="input-field col offset-s7 s5 offset-l9 l3 right-align">
       <input type="text" v-model="filter" id="phones-filter" class="">
@@ -107,7 +106,6 @@
 </template>
 
 <script>
-import EditPhone from './EditPhone.vue'
 import { phonesRef } from '../firebase'
 import firebase from 'firebase'
 import { TheMask } from 'vue-the-mask'
