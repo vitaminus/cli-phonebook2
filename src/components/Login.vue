@@ -18,8 +18,11 @@
           </div>
         </div>
       </div>
+      <div class="row" v-show="hasError">
+        <div class="col offset-s2 s8 error">{{ message }}</div>
+      </div>
       <div class="row">
-        <button @click="signIn" class="btn">Enter</button>
+        <button v-bind:disabled="errors.any()" @click="signIn" class="btn">Enter</button>
       </div>
       <span>or create new <router-link to="/sign-up">account</router-link>.</span>
     </div>
@@ -50,13 +53,17 @@ export default {
           vm.email = ''
           vm.password = ''
           vm.$validator.reset()
-          console.log('Logged in!')
           vm.$router.replace('phones')
         },
         function (err) {
-          console.log('Error!!! ' + err.message)
           vm.hasError = true
-          vm.message = err.message
+          if (err.message.includes('no user record corresponding')) {
+            vm.message = 'Wrong email!'
+          } else if (err.message.includes('password is invalid')) {
+            vm.message = 'Password is invalid!'
+          } else {
+            console.log('Error!!! ' + err.message)
+          }
         }
       )
     }
