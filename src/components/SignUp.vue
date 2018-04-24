@@ -3,14 +3,14 @@
     <h3>Sign Up</h3>
     <div class="col s12">
       <div class="row">
-        <div class="input-field col offset-s3 s6">
+        <div class="input-field col offset-s1 s10 offset-m3 m6 offset-l3 l6">
           <input type="email" v-model="email" name="email" id="user-email" class="validate" v-validate="'required|min:10|max:50|email'">
           <label for="user-email">Email</label>
           <div class="error-block">
             <span class="error" v-show="errors.has('email')">{{ errors.first('email') }}</span>
           </div>
         </div>
-        <div class="input-field col offset-s3 s6">
+        <div class="input-field col offset-s1 s10 offset-m3 m6 offset-l3 l6">
           <input type="password" v-model="password" name="password" id="user-password" class="validate" v-validate="'required|min:9|max:30'">
           <label for="user-password">Password</label>
           <div class="error-block">
@@ -22,7 +22,7 @@
         <div class="col offset-s2 s8 error">{{ message }}</div>
       </div>
       <div class="row">
-        <button @click="signUp" v-bind:disabled="errors.any()" class="btn">Sign Up</button>
+        <button @click="signUp" v-bind:disabled="errors.any()" class="btn col offset-s1 s10 offset-m4 m4 offset-l4 l4">Sign Up</button>
       </div>
       <span>or go back to <router-link to="/login">login</router-link></span>
     </div>
