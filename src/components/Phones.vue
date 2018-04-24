@@ -139,7 +139,7 @@ export default {
     filteredPhones: function () {
       let userId = this.currentUser.uid
       return this.phones.filter(phone =>
-        phone.name.toLowerCase().includes(this.filter) && phone.userId === userId)
+        phone.name.toLowerCase().includes(this.filter.toLowerCase()) && phone.userId === userId)
     },
     currentUser: function () {
       return firebase.auth().currentUser
